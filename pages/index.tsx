@@ -1,6 +1,4 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
 import { useState } from 'react'
 import { questions } from '../util/questions'
 const Home: NextPage = () => {
@@ -10,11 +8,10 @@ const Home: NextPage = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0)
 
   // Helper functions
-  function roundUpNearest10(num: number) {
+  function roundUpNearest10(num: number): number {
     return Math.round(num / 10) * 10
   }
   function optionClicked(points: number): void {
-    console.log(score + points)
     setScore(score + points)
     if (currentQuestion + 1 < questions.length) {
       setCurrentQuestion(currentQuestion + 1)
@@ -22,8 +19,8 @@ const Home: NextPage = () => {
       setFinalResults(true)
     }
   }
-  function getResults(points: number) {
-    let roundedScore = roundUpNearest10(score)
+  function getResults(points: number): any {
+    const roundedScore = roundUpNearest10(score)
     if (roundedScore === 0) {
       return <p>test</p>
     }
@@ -84,19 +81,19 @@ const Home: NextPage = () => {
               {questions[currentQuestion].text}
             </h3>
 
-            <ul className="list-none text-lg">
+            <div className="flex flex-col text-lg">
               {questions[currentQuestion].options.map((option) => {
                 return (
-                  <li
+                  <button
                     onClick={() => optionClicked(option.points)}
                     key={option.id}
-                    className="mt-2 rounded-xl border-4 border-white bg-secondary p-4"
+                    className="mt-2 rounded-xl border-4 border-white bg-secondary p-4 hover:bg-light hover:text-secondary"
                   >
                     {option.text}
-                  </li>
+                  </button>
                 )
               })}
-            </ul>
+            </div>
           </div>
         </>
       )}
