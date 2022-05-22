@@ -1,86 +1,106 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-
+import { useState } from 'react'
+import { questions } from '../util/questions'
 const Home: NextPage = () => {
+  // properties
+  const [showFinalResults, setFinalResults] = useState(false)
+  const [score, setScore] = useState(0)
+  const [currentQuestion, setCurrentQuestion] = useState(0)
+
+  // Helper functions
+  function roundUpNearest10(num: number) {
+    return Math.round(num / 10) * 10
+  }
+  function optionClicked(points: number): void {
+    console.log(score + points)
+    setScore(score + points)
+    if (currentQuestion + 1 < questions.length) {
+      setCurrentQuestion(currentQuestion + 1)
+    } else {
+      setFinalResults(true)
+    }
+  }
+  function getResults(points: number) {
+    let roundedScore = roundUpNearest10(score)
+    if (roundedScore === 0) {
+      return <p>test</p>
+    }
+    if (roundedScore === 10) {
+      return "D'Artagnan"
+    }
+    if (roundedScore === 20) {
+      return 'Porthos'
+    }
+    if (roundedScore === 30) {
+      return 'Aramis'
+    }
+    if (roundedScore === 40) {
+      return 'Athos'
+    }
+  }
+  function restartGame(): void {
+    setFinalResults(false)
+    setScore(0)
+    setCurrentQuestion(0)
+  }
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
-
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
+    <div className="flex min-h-screen flex-col place-content-evenly  items-center bg-gradient-to-r from-primary to-secondary">
+      {/* 1. Header */}
+      <h1 className="w-2/3 text-center text-2xl font-extrabold text-light sm:text-3xl md:text-4xl lg:text-5xl">
+        Nelja musketäri iseloomutest
+      </h1>
+      {showFinalResults ? (
+        /* 3. Final results */
+        <div className="shadow-black color-white h-auto w-1/2 rounded-2xl bg-primary p-16 text-center text-white opacity-75 shadow-2xl">
+          <h2 className="text-3xl text-light">Sina oled:</h2>
+          <h3 className="pb-12 pt-2 text-5xl font-extrabold text-white">
+            {getResults(score)}
+          </h3>
+          <button
+            onClick={() => restartGame()}
+            className="text-1xl hover:border-1 rounded-md bg-light px-32 py-3 font-medium text-primary transition duration-300 hover:border-white hover:bg-secondary hover:text-light"
           >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and its API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+            Alusta uuesti
+          </button>
         </div>
-      </main>
+      ) : (
+        /* 3. Question card */
+        <>
+          <div className="w-2/3">
+            <h2 className="hidden text-base text-white sm:block">
+              Milline musketär oled sina? Vasta kõikidele küsimustele ja saa
+              teada, kas sa oled nagu: Athos, kaitsja; Aramis, intellektuaal;
+              Porthos, iludus; D'Artagnan, juht.
+            </h2>
+          </div>
 
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-        </a>
-      </footer>
+          <div className="border-gray-200 shadow-black color-white flex h-auto w-5/6 flex-col rounded-2xl border bg-primary bg-opacity-60 bg-clip-padding p-6 text-center text-white opacity-75 shadow-2xl backdrop-blur-xl backdrop-filter sm:p-16">
+            <h2 className="text-2xl">
+              {currentQuestion + 1}/{questions.length} küsimus
+            </h2>
+            <h3 className="p-6 text-xl text-light sm:text-3xl">
+              {questions[currentQuestion].text}
+            </h3>
+
+            <ul className="list-none text-lg">
+              {questions[currentQuestion].options.map((option) => {
+                return (
+                  <li
+                    onClick={() => optionClicked(option.points)}
+                    key={option.id}
+                    className="mt-2 rounded-xl border-4 border-white bg-secondary p-4"
+                  >
+                    {option.text}
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        </>
+      )}
     </div>
   )
 }
-
 export default Home
